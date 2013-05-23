@@ -1,11 +1,11 @@
 extends layout
 
-block header
-	header
+block append head
+	meta(name='description', content='nodejs jade')
 
 block content
 	section#container
-		h1 Join the New Myspace
+		h1 Hello, Welcome
 
 		ul
 			li
@@ -54,4 +54,4 @@ block content
 			each val, key in obj
 				li #{key}: #{val}
 
-
+	include footer
