@@ -1,0 +1,73 @@
+@font-face {
+	font-family:'BentonSans';
+	src:url('https://x.myspacecdn.com/new/common/webfonts/Bold/b8ab2137-7902-43d7-8a1b-ffb76b3d8d77-2.eot?#iefix') format('embedded-opentype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Bold/b8ab2137-7902-43d7-8a1b-ffb76b3d8d77-3.woff') format('woff'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Bold/b8ab2137-7902-43d7-8a1b-ffb76b3d8d77-1.ttf') format('truetype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Bold/b8ab2137-7902-43d7-8a1b-ffb76b3d8d77-4.svg#web') format('svg');
+	font-weight:700; font-style:normal;
+}
+@font-face {
+	font-family:'BentonSans';
+	src:url('https://x.myspacecdn.com/new/common/webfonts/Medium/df10da2c-4862-4924-bd09-1f85ed8c1dd8-2.eot?#iefix') format('embedded-opentype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Medium/df10da2c-4862-4924-bd09-1f85ed8c1dd8-3.woff') format('woff'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Medium/df10da2c-4862-4924-bd09-1f85ed8c1dd8-1.ttf') format('truetype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Medium/df10da2c-4862-4924-bd09-1f85ed8c1dd8-4.svg#web') format('svg');
+	font-weight:500; font-style:normal;
+}
+@font-face {
+	font-family:'BentonSans';
+	src:url('https://x.myspacecdn.com/new/common/webfonts/Regular/49025c72-39e1-415f-8ced-4d1f41787ca6-2.eot?#iefix') format('embedded-opentype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Regular/49025c72-39e1-415f-8ced-4d1f41787ca6-3.woff') format('woff'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Regular/49025c72-39e1-415f-8ced-4d1f41787ca6-1.ttf') format('truetype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Regular/49025c72-39e1-415f-8ced-4d1f41787ca6-4.svg#web') format('svg');
+	font-weight:400; font-style:normal;
+}
+@font-face {
+	font-family:'BentonSans';
+	src:url('https://x.myspacecdn.com/new/common/webfonts/Light/b4f87ce4-3979-480f-987e-ef155763f8fe-2.eot?#iefix') format('embedded-opentype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Light/b4f87ce4-3979-480f-987e-ef155763f8fe-3.woff') format('woff'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Light/b4f87ce4-3979-480f-987e-ef155763f8fe-1.ttf') format('truetype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Light/b4f87ce4-3979-480f-987e-ef155763f8fe-4.svg#web') format('svg');
+	font-weight:200; font-style:normal;
+}
+@font-face {
+	font-family:'BentonSans';
+	src:url('https://x.myspacecdn.com/new/common/webfonts/Thin/98fedf04-c934-4a07-8429-4c8a1309d545-2.eot?#iefix') format('embedded-opentype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Thin/98fedf04-c934-4a07-8429-4c8a1309d545-3.woff') format('woff'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Thin/98fedf04-c934-4a07-8429-4c8a1309d545-1.ttf') format('truetype'),
+		url('https://x.myspacecdn.com/new/common/webfonts/Thin/98fedf04-c934-4a07-8429-4c8a1309d545-4.svg#web') format('svg');
+	font-weight:100; font-style:normal;
+}
+
+body,div,p,ul,li,article,section,span,h1{ 
+	margin:0; padding:0;
+}
+body{
+	font-size:12px; background:rgba(238,238,238,.98); font-family:BentonSans,"Lucida Sans","Lucida Grande",sans-serif;
+	-webkit-font-smoothing:antialiased;
+}
+ul,li{
+	list-style:none;
+}
+img{
+	border:none;
+}
+
+#container{
+	width:800px; margin:0 auto; margin-top:200px; color:#666;
+}
+#container h1{
+	font-size:50px; font-weight:100;
+}
+li{
+	margin-bottom:10px;
+}
+li p{
+	font:12px/30px sans-serif;
+}
+li input{
+	background:none; border:none; outline:none; height:30px; padding:5px; border-bottom:1px solid #bbb; width:200px;
+}
+li input:focus{
+	background:#fb0; border-bottom:1px solid #fff;
+}
