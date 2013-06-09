@@ -1,6 +1,6 @@
 @font-face {  
 	font-family: "batho";  
-	src: url("font/batho.ttf") format("truetype");
+	src: url("./font/batho.ttf") format("truetype");
 	font-weight: normal;
     font-style: normal;
 }
@@ -17,8 +17,12 @@ img{ border:none; }
 
 
 #nav{
-	width:220px; left:55px; top:0; position:fixed; background:#fff; height:100px;
+	width:220px;left:55px;top:0;position:fixed;background:#fff;height:100px;
 }
+#nav .logo{
+	width:100%;height:100px;background:#3cf;color:#fff;font-family:batho;font-size:50px;
+}
+.logo p:nth-chil
 
 
 
