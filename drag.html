@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=320, initial-scale=1, minimum-scale=1, maximum-scale=1">
+	<title>touch bar</title>
+	<style type="text/css">
+		*{padding:0;margin:0;}
+		body{
+			font-size:14px;font-family:Arial;padding-top:100px;
+			-webkit-text-size-adjust:none; -webkit-user-select:none; -webkit-tap-highlight-color:rgba(0,0,0,0);
+		}
+		ul,li{list-style:none;padding:none;}
+
+		.mod_title{width:100%;margin:0 auto;background:#eee;margin-bottom:10px;color:#333;display:table;}
+		.mod_title li{display:table-cell;line-height:40px;}
+		.mod_title li:nth-child(1){width:50px;padding-left:10px;text-align:left;}
+		.mod_title li:nth-child(3){width:50px;padding-right:10px;text-align:right;}
+		.mod_title li:nth-child(2){text-align:center;}
+
+		.mod_bar{width:100%;margin:0 auto;display:table;}
+		.mod_bar li{display:table-cell;position:relative;}
+		.mod_bar li:nth-child(1),
+		.mod_bar li:nth-child(3){
+			width:40px;height:40px;line-height:40px;text-align:center;color:#666;background:#eee;cursor:pointer;font-size:26px;
+			-webkit-border-radius:100%;
+			   -moz-border-radius:100%;
+					border-radius:100%;
+		}
+		.mod_bar li:nth-child(2){vertical-align:middle;}
+		.mod_bar .drag{
+			margin:0 30px;height:16px;background:#eee;position:relative;
+			-webkit-border-radius:8px;
+			   -moz-border-radius:8px;
+					border-radius:8px;
+			-webkit-box-shadow:inset 1px 1px 1px rgba(0,0,0,.3);
+			   -moz-box-shadow:inset 1px 1px 1px rgba(0,0,0,.3);
+					box-shadow:inset 1px 1px 1px rgba(0,0,0,.3);
+		}
+		.mod_bar .flag{
+			width:40px;height:40px;position:absolute;left:-20px;top:50%;margin-top:-20px;cursor:pointer;background:rgba(255,255,255,.3);
+			-webkit-box-shadow:2px 2px 2px rgba(0,0,0,.1),-2px -2px 2px rgba(0,0,0,.1),2px -2px 2px rgba(0,0,0,.1),-2px 2px 2px rgba(0,0,0,.1);
+			   -moz-box-shadow:2px 2px 2px rgba(0,0,0,.1),-2px -2px 2px rgba(0,0,0,.1),2px -2px 2px rgba(0,0,0,.1),-2px 2px 2px rgba(0,0,0,.1);
+					box-shadow:2px 2px 2px rgba(0,0,0,.1),-2px -2px 2px rgba(0,0,0,.1),2px -2px 2px rgba(0,0,0,.1),-2px 2px 2px rgba(0,0,0,.1);
+			-webkit-border-radius:100%;
+			   -moz-border-radius:100%;
+					border-radius:100%;
+		}
+	</style>
+</head>
+<body>
+<ul class="mod_title">
+	<li>50</li>
+	<li>0</li>
+	<li>100</li>
+</ul>
+<ul class="mod_bar">
+	<li id="cut">-</li>
+	<li>
+		<div class="drag" id="drag">
+			<div class="flag" id="flag"></div>
+		</div>
+	</li>
+	<li id="add">+</li>
+</ul>
+<script type="text/javascript">
+(function(w){
+    var support = {
+    		transform3d: ("WebKitCSSMatrix" in w && "m11" in new WebKitCSSMatrix()),
+    		touch : ("ontouchstart" in w)
+    	},
+        touch_start_event = support.touch ? "touchstart" : "mousedown", 
+        touch_move_event  = support.touch ? "touchmove" : "mousemove", 
+        touch_end_event   = support.touch ? "touchend" : "mouseup",
+        touch_click_event = support.touch ? "touchstart" : "click";
+
+	var digits = document.querySelectorAll(".mod_title li"),
+		digMin = parseInt(digits[0].textContent),
+		digVal = digits[1],
+		digMax = parseInt(digits[2].textContent),
+		diff   = digMax - digMin; //差值
+
+	var btnCut  = document.getElementById("cut"), //减号
+		btnAdd  = document.getElementById("add"), //加号
+		btnDrag = document.getElementById("drag"), //条
+		btnFlag = document.getElementById("flag"); //滚动标记
+
+	var btnLen  = btnDrag.offsetWidth, //滚条的宽度
+		btnLeft = btnDrag.getBoundingClientRect().left; //滚动条左距离
+
+	var cash      = btnLen/diff, //初始对应率
+		moveReady = false, //移动状态
+		timeFlag  = false, //时间标志
+		interTime = 1; //延迟时间
+
+	digVal.textContent = digMin;
+
+	var app = {
+		init: function(){
+			var self = this;
+			var e = e || window.event;
+
+			self.newX  = 0;
+			self.distX = 0;
+
+			if(support.touch){
+				btnCut.ontouchstart = function(){
+					timeFlag = true;
+					self._cut();
+					self._cutLoop();
+					document.ontouchend = function(){
+						timeFlag = false;
+						interTime = 1;
+					};
+				};
+				btnAdd.ontouchstart = function(){
+					timeFlag = true;
+					self._add();
+					self._addLoop();
+					document.ontouchend = function(){
+						timeFlag = false;
+						interTime = 1;
+					};
+				};
+			}else{
+				btnCut.onmousedown = function(){
+					timeFlag = true;
+					self._cut();
+					self._cutLoop();
+					document.onmouseup = function(){
+						timeFlag = false;
+						interTime = 1;
+					};
+				};
+				btnAdd.onmousedown = function(){
+					timeFlag = true;
+					self._add();
+					self._addLoop();
+					document.onmouseup = function(){
+						timeFlag = false;
+						interTime = 1;
+					};
+				};
+			}
+
+			btnDrag.addEventListener(touch_start_event, function(e){
+				self._touchstart(e);
+				document.addEventListener(touch_move_event, function(e){
+					self._touchmove(e);
+				}, false);
+				document.addEventListener(touch_end_event, function(e){
+					self._touchend(e);
+				}, false);
+			}, false);
+		},
+		_cut: function(){
+			var self = this;
+			if(self.distX > 0){
+				self.distX = self.distX - cash;
+				digVal.textContent--;
+
+				if(digVal.textContent <= digMin){
+					self.moveFlag(0);
+					self.distX = 0;
+				}else{
+					self.moveFlag(self.distX);
+				}
+				self.newX = self.distX;
+			}else{
+				if(digVal.textContent > digMin){
+					digVal.textContent--;
+				}
+			}
+		},
+		_add: function(){
+			var self = this;
+			if(self.distX < btnLen){
+				self.distX = self.distX + cash;
+				digVal.textContent++;
+
+				if(digVal.textContent >= digMax){
+					self.moveFlag(btnLen);
+					self.distX = btnLen;
+				}else{
+					self.moveFlag(self.distX);
+				}
+				self.newX = self.distX;
+			}else{
+				if(digVal.textContent < digMax){
+					digVal.textContent++;
+				}
+			}
+		},
+		_cutLoop: function(){
+			var self = this;
+			if(interTime == 0){
+				setTimeout(function(){
+					self._cut();
+					self._cutLoop();
+				}, 100)
+			}else if(timeFlag){
+				interTime--;
+				setTimeout(function(){
+					self._cutLoop();
+				}, 1000);
+			}
+		},
+		_addLoop: function(){
+			var self = this;
+			if(interTime == 0){
+				setTimeout(function(){
+					self._add();
+					self._addLoop();
+				}, 100)
+			}else if(timeFlag){
+				interTime--;
+				setTimeout(function(){
+					self._addLoop();
+				}, 1000);
+			}
+		},
+		_touchstart: function(e){
+			var self = this;
+
+			self.startPageX = self.getPage(e);
+			moveReady = true;
+			self.distX = self.startPageX - btnLeft;
+			self._moveShow();
+		},
+		_touchmove: function(e){
+			var self = this;
+
+			e.preventDefault();
+			e.stopPropagation();
+
+			if(moveReady){
+				var pageX = self.getPage(e);
+				self.distX = pageX - self.startPageX + self.newX;
+				self._moveShow();
+			}
+		},
+		_touchend: function(e){
+			var self = this;
+
+			moveReady = false;
+			self._moveShow();
+			self.newX = self.distX;
+			document.removeEventListener(touch_move_event, function(e){
+				self._touchmove(e);
+			}, false);
+		},
+		_moveShow: function(){
+			var self = this;
+
+			if(self.distX > btnLen){
+				self.distX = btnLen;
+			}else if(self.distX < 0){
+				self.distX = 0;
+			}
+			if(self.distX >= 0 && self.distX <= btnLen){
+				self.moveFlag(self.distX);
+				digVal.innerHTML = digMin + Math.round(self.distX / cash);
+			}
+		},
+		getPage: function(e){
+            return support.touch ? e.changedTouches[0].pageX : e.pageX;
+		},
+		getTranslate: function(x, y) {
+			return support.transform3d
+				? "translate3d("+x+"px, "+y+"px, 0)"
+				: "translate("+x+"px, "+y+"px)";
+		},
+		getAgent: function(){
+			var UA = navigator.userAgent.toLowerCase(),
+				browerKernel = {
+					isChrome : function(){
+					    if(/chrome/i.test(UA) && /webkit/i.test(UA) && /mozilla/i.test(UA))
+					        return true;
+					    else
+					        return false;
+					},
+					isSafari : function(){
+					    if(/webkit/i.test(UA) &&!(/chrome/i.test(UA) && /webkit/i.test(UA) && /mozilla/i.test(UA)))
+					        return true;
+					    else
+					        return false;
+					}
+				},
+				browerType;
+			if(browerKernel.isChrome() || browerKernel.isSafari()){
+				browerType = true;
+			}else{
+				browerType = false;
+			}
+			return browerType;
+		},
+		moveFlag: function(x){
+			var self = this;
+			if(self.getAgent()){
+				btnFlag.style.webkitTransform = self.getTranslate(x, 0);
+			}else{
+				btnFlag.style.transform = self.getTranslate(x, 0);
+			}
+		}
+	}
+
+	app.init();
+})(window);
+</script>
+
+</body>
+</html>
