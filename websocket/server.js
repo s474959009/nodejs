@@ -3,7 +3,7 @@ var http = require("http"),
 
 //create http server
 var server = http.createServer(function(request, response){
-	response.writeHead({"Content-Type": "text/html"});
+	response.writeHead(200, {"Content-Type": "text/html"});
 	response.end("HTML5 WebSocket Demo");
 });
 server.listen(8000, "localhost");
@@ -21,4 +21,3 @@ socket.on("connection", function(client){
 		console.log("disconnect");
 	});
 });
-
